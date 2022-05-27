@@ -1,18 +1,25 @@
 defmodule HelloNervesOled do
-  @moduledoc """
-  Documentation for HelloNervesOled.
-  """
+  @moduledoc false
 
-  @doc """
-  Hello world.
+  alias HelloNervesOled.Display
 
-  ## Examples
+  def japan(padding \\ 40) do
+    Display.clear()
+    Display.rect(padding, 0, 127 - padding * 2, 31)
+    Display.circle(63, 15, 8)
+    Display.display()
 
-      iex> HelloNervesOled.hello
-      :world
+    :ok
+  end
 
-  """
-  def hello do
-    :world
+  def circle(radius \\ 15) do
+    for x <- 0..127 + radius + 1 do
+      Display.clear()
+      Display.circle(x, 15, radius)
+      Display.display()
+      Process.sleep(1)
+    end
+
+    :ok
   end
 end

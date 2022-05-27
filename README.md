@@ -1,6 +1,6 @@
 # HelloNervesOled
 
-**TODO: Add description**
+![20220527_223724](https://user-images.githubusercontent.com/7563926/170806642-9cce8043-98da-411f-8362-82e3208d2663.jpg)
 
 ## Targets
 

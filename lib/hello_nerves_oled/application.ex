@@ -35,6 +35,7 @@ defmodule HelloNervesOled.Application do
       # Children for all targets except host
       # Starts a worker by calling: HelloNervesOled.Worker.start_link(arg)
       # {HelloNervesOled.Worker, arg},
+      HelloNervesOled.Display
     ]
   end
 
