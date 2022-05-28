@@ -3,7 +3,6 @@ defmodule HelloNervesOled.Font do
 
   alias HelloNervesOled.ChiselFontCache
 
-  @fonts_destination_dir "/data/fonts"
   @fonts_source_base_url "https://raw.githubusercontent.com/olikraus/u8g2/master/tools/font/bdf"
 
   @doc """
@@ -26,15 +25,14 @@ defmodule HelloNervesOled.Font do
   end
 
   defp build_chisel_font(bdf_font_name) do
-    File.mkdir_p(@fonts_destination_dir)
+    fonts_destination_dir = Path.join([System.tmp_dir!(), "fonts"])
+    File.mkdir_p(fonts_destination_dir)
 
     font_data_src = Path.join([@fonts_source_base_url, bdf_font_name])
-    font_data_file = Path.join([@fonts_destination_dir, bdf_font_name])
+    font_data_file = Path.join([fonts_destination_dir, bdf_font_name])
 
-    if not File.exists?(font_data_file) do
-      %{status: 200, body: raw_font} = Req.get!(font_data_src)
-      File.write!(font_data_file, raw_font)
-    end
+    %{status: 200, body: raw_font} = Req.get!(font_data_src)
+    File.write!(font_data_file, raw_font)
 
     {:ok, %Chisel.Font{} = chisel_font} = Chisel.Font.load(font_data_file)
 
