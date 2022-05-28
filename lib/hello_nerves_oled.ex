@@ -3,9 +3,10 @@ defmodule HelloNervesOled do
 
   alias HelloNervesOled.Display
   alias HelloNervesOled.Font
+  alias HelloNervesOled.ClockServer
 
   def japan(opts \\ []) do
-    font_name = opts[:font_name] || "5x8.bdf"
+    font_name = opts[:font_name] || "6x10.bdf"
     chisel_font = Font.load!(font_name)
 
     # Clear the display buffer
@@ -17,7 +18,7 @@ defmodule HelloNervesOled do
     Display.circle(63, 8, 4)
 
     # Draw text on the display buffer
-    Display.put_text("JAPAN", x: 36, y: 18, chisel_font: chisel_font, size_x: 2, size_y: 2)
+    Display.put_text("JAPAN", x: 48, y: 18, chisel_font: chisel_font)
 
     # Transfer the display buffer to the screen
     Display.display()
@@ -26,7 +27,7 @@ defmodule HelloNervesOled do
   end
 
   def circle(radius \\ 15) do
-    for x <- 0..127 + radius + 1 do
+    for x <- 0..(127 + radius + 1) do
       Display.clear()
       Display.circle(x, 15, radius)
       Display.display()
@@ -34,5 +35,31 @@ defmodule HelloNervesOled do
     end
 
     :ok
+  end
+
+  def metrics do
+    chisel_font = Font.load!("6x10.bdf")
+
+    ClockServer.start_link(
+      interval_ms: 1_000,
+      on_tick: fn ->
+        Display.clear()
+
+        Enum.with_index(collect_metrics(), fn {key, value}, index ->
+          content = "#{key |> to_string() |> String.pad_trailing(10)}: #{value}"
+          Display.put_text(content, x: 0, y: 10 * index, chisel_font: chisel_font)
+        end)
+
+        Display.display()
+      end
+    )
+  end
+
+  defp collect_metrics() do
+    [
+      time: Time.utc_now() |> Time.truncate(:second) |> to_string(),
+      memory: :erlang.memory(:total),
+      process: :erlang.system_info(:process_count)
+    ]
   end
 end

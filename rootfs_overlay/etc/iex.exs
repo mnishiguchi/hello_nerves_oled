@@ -4,6 +4,8 @@ NervesMOTD.print()
 use Toolshed
 
 import HelloNervesOled
+
 alias HelloNervesOled.ChiselFontCache
+alias HelloNervesOled.ClockServer
 alias HelloNervesOled.Display
 alias HelloNervesOled.Font
