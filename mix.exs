@@ -23,7 +23,7 @@ defmodule HelloNervesOled.MixProject do
   def application do
     [
       mod: {HelloNervesOled.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :inets]
     ]
   end
 
@@ -36,6 +36,8 @@ defmodule HelloNervesOled.MixProject do
       {:ring_logger, "~> 0.8.3"},
       {:toolshed, "~> 0.2.13"},
       {:scenic_driver_oled, "~> 0.1.0"},
+      {:chisel, "~> 0.2.0"},
+      {:req, "~> 0.2.2"},
 
       # Dependencies for all targets except :host
       {:nerves_runtime, "~> 0.11.6", targets: @all_targets},

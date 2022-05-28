@@ -5,3 +5,4 @@ use Toolshed
 
 import HelloNervesOled
 alias HelloNervesOled.Display
+alias HelloNervesOled.Font
