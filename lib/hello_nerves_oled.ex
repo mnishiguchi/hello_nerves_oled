@@ -38,12 +38,13 @@ defmodule HelloNervesOled do
   end
 
   def metrics do
-    print_kv_periodically(fn ->
+    print_periodically(fn ->
       [
         time: Time.utc_now() |> Time.truncate(:second) |> to_string(),
         memory: :erlang.memory(:total),
         process: :erlang.system_info(:process_count)
       ]
+      |> kv_pairs_to_string()
     end)
   end
 
@@ -53,7 +54,7 @@ defmodule HelloNervesOled do
       _ -> nil
     end
 
-    print_kv_periodically(fn ->
+    print_periodically(fn ->
       {:ok, measurement} = BMP280.measure(BMP280)
 
       [
@@ -64,26 +65,30 @@ defmodule HelloNervesOled do
         dew_point: measurement.dew_point_c |> :erlang.float_to_binary(decimals: 2),
         temperature: measurement.temperature_c |> :erlang.float_to_binary(decimals: 2)
       ]
+      |> kv_pairs_to_string()
     end)
   end
 
-  defp print_kv_periodically(get_kv_pairs_fn) do
+  def kv_pairs_to_string(kv_pairs) do
+    kv_pairs
+    |> Enum.map(fn {key, value} ->
+      _row = [
+        key |> to_string() |> String.pad_trailing(12),
+        value |> to_string() |> String.pad_leading(8),
+        '\n'
+      ]
+    end)
+    |> to_string()
+  end
+
+  defp print_periodically(content_fn) do
     chisel_font = Font.load!("6x10.bdf")
 
     ClockServer.start_link(
       on_tick: fn ->
         Display.clear()
 
-        Enum.with_index(get_kv_pairs_fn.(), fn {key, value}, index ->
-          content =
-            [
-              key |> to_string() |> String.pad_trailing(12),
-              value |> to_string() |> String.pad_leading(8)
-            ]
-            |> to_string
-
-          Display.put_text(content, x: 0, y: 10 * index, chisel_font: chisel_font)
-        end)
+        content_fn.() |> Display.put_text(x: 0, y: 0, chisel_font: chisel_font)
 
         Display.display()
       end

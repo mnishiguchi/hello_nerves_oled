@@ -3,7 +3,7 @@ defmodule HelloNervesOled.ClockServer do
 
   use GenServer, restart: :transient
 
-  @interval_ms :timer.seconds(10)
+  @interval_ms :timer.seconds(8)
 
   @doc """
   ## Examples
@@ -32,9 +32,10 @@ defmodule HelloNervesOled.ClockServer do
 
   @impl GenServer
   def handle_info(:tick, state) do
-    task = Task.async(state.on_tick)
     Process.send_after(self(), :tick, @interval_ms)
-    Task.await(task, @interval_ms)
+
+    # Do things in another process, but make sure it is done within time limit
+    Task.async(state.on_tick) |> Task.await(@interval_ms)
 
     {:noreply, state}
   end

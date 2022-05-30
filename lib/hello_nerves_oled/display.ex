@@ -6,10 +6,11 @@ defmodule HelloNervesOled.Display do
 
   @spec put_text(binary, keyword) :: :ok
   def put_text(text, opts) do
-    x = Access.fetch!(opts, :x)
-    y = Access.fetch!(opts, :y)
+    x = opts[:x] || 0
+    y = opts[:y] || 0
     chisel_font = Access.fetch!(opts, :chisel_font)
 
+    # TODO: This seems to take 5..8 seconds. Optimize it if possible.
     put_pixel_fun = fn x, y -> put_pixel(x, y, opts) end
     Chisel.Renderer.draw_text(text, x, y, chisel_font, put_pixel_fun, opts)
   end
