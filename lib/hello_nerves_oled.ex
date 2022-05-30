@@ -37,36 +37,54 @@ defmodule HelloNervesOled do
     :ok
   end
 
-  def metrics do
-    print_periodically(fn ->
-      [
-        time: Time.utc_now() |> Time.truncate(:second) |> to_string(),
-        memory: :erlang.memory(:total),
-        process: :erlang.system_info(:process_count)
-      ]
-      |> kv_pairs_to_string()
-    end)
+  def metrics(n \\ 30) do
+    chisel_font = Font.load!("6x10.bdf")
+
+    for n <- 1..n do
+      text =
+        [
+          n: n,
+          time: Time.utc_now() |> Time.truncate(:second) |> to_string(),
+          memory: :erlang.memory(:total),
+          process: :erlang.system_info(:process_count)
+        ]
+        |> kv_pairs_to_string()
+
+      Display.clear()
+      put_pixel_fun = fn x, y -> Display.put_pixel(x, y, []) end
+      Chisel.Renderer.draw_text(text, 0, 0, chisel_font, put_pixel_fun, [])
+      Display.display()
+    end
   end
 
-  def bmp280 do
+  def bmp280(n \\ 30) do
     case BMP280.start_link(name: BMP280) do
       {:ok, _} -> BMP280.force_altitude(BMP280, 100)
       _ -> nil
     end
 
-    print_periodically(fn ->
+    chisel_font = Font.load!("6x10.bdf")
+
+    for n <- 1..n do
       {:ok, measurement} = BMP280.measure(BMP280)
 
-      [
-        time: Time.utc_now() |> Time.truncate(:second) |> to_string(),
-        humidity: measurement.humidity_rh |> :erlang.float_to_binary(decimals: 2),
-        pressure:
-          measurement.pressure_pa |> Kernel./(100) |> :erlang.float_to_binary(decimals: 2),
-        dew_point: measurement.dew_point_c |> :erlang.float_to_binary(decimals: 2),
-        temperature: measurement.temperature_c |> :erlang.float_to_binary(decimals: 2)
-      ]
-      |> kv_pairs_to_string()
-    end)
+      text =
+        [
+          n: n,
+          time: Time.utc_now() |> Time.truncate(:second) |> to_string(),
+          humidity: measurement.humidity_rh |> :erlang.float_to_binary(decimals: 2),
+          pressure:
+            measurement.pressure_pa |> Kernel./(100) |> :erlang.float_to_binary(decimals: 2),
+          dew_point: measurement.dew_point_c |> :erlang.float_to_binary(decimals: 2),
+          temperature: measurement.temperature_c |> :erlang.float_to_binary(decimals: 2)
+        ]
+        |> kv_pairs_to_string()
+
+      Display.clear()
+      put_pixel_fun = fn x, y -> Display.put_pixel(x, y, []) end
+      Chisel.Renderer.draw_text(text, 0, 0, chisel_font, put_pixel_fun, [])
+      Display.display()
+    end
   end
 
   def kv_pairs_to_string(kv_pairs) do
@@ -79,19 +97,5 @@ defmodule HelloNervesOled do
       ]
     end)
     |> to_string()
-  end
-
-  defp print_periodically(content_fn) do
-    chisel_font = Font.load!("6x10.bdf")
-
-    ClockServer.start_link(
-      on_tick: fn ->
-        Display.clear()
-
-        content_fn.() |> Display.put_text(x: 0, y: 0, chisel_font: chisel_font)
-
-        Display.display()
-      end
-    )
   end
 end
