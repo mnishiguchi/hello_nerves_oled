@@ -36,8 +36,13 @@ defmodule HelloNervesOled.Application do
       # Starts a worker by calling: HelloNervesOled.Worker.start_link(arg)
       # {HelloNervesOled.Worker, arg},
       HelloNervesOled.ChiselFontCache,
-      HelloNervesOled.Display
+      HelloNervesOled.Display,
+      demo_server_mod()
     ]
+  end
+
+  def demo_server_mod do
+    Application.get_env(:hello_nerves_oled, :demo_server_mod)
   end
 
   def target() do

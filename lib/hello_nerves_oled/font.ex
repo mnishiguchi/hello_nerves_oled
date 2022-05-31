@@ -1,8 +1,6 @@
 defmodule HelloNervesOled.Font do
   @moduledoc false
 
-  alias HelloNervesOled.ChiselFontCache
-
   @fonts_source_base_url "https://raw.githubusercontent.com/olikraus/u8g2/master/tools/font/bdf"
 
   @doc """
@@ -21,7 +19,7 @@ defmodule HelloNervesOled.Font do
       raise("font name must end with .bdf")
     end
 
-    ChiselFontCache.get_or_insert_by(bdf_font_name, &build_chisel_font/1)
+    HelloNervesOled.ChiselFontCache.get_or_insert_by(bdf_font_name, &build_chisel_font/1)
   end
 
   defp build_chisel_font(bdf_font_name) do

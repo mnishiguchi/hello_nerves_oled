@@ -1,5 +1,7 @@
 import Config
 
+config :hello_nerves_oled, demo_server_mod: HelloNervesOled.BMP280Server
+
 # https://hexdocs.pm/oled/OLED.Display.html
 config :hello_nerves_oled, HelloNervesOled.Display,
   driver: :ssd1306,
