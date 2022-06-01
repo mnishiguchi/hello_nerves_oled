@@ -37,7 +37,6 @@ defmodule HelloNervesOled.MixProject do
       {:toolshed, "~> 0.2.13"},
       {:scenic_driver_oled, "~> 0.1.0"},
       {:chisel, "~> 0.2.0"},
-      {:req, "~> 0.2.2"},
       {:bmp280, "~> 0.2.11"},
 
       # Dependencies for all targets except :host

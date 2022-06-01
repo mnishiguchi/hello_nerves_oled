@@ -1,10 +1,11 @@
 defmodule HelloNervesOled.Font do
   @moduledoc false
 
-  @fonts_source_base_url "https://raw.githubusercontent.com/olikraus/u8g2/master/tools/font/bdf"
 
   @doc """
-  Loads a font from [olikraus/u8g2] as [Chisel.Font].
+  Loads a font from priv/fonts directory and converts it to [Chisel.Font]
+
+  See [olikraus/u8g2] for bdf fonts.
 
   ## Examples
 
@@ -23,13 +24,14 @@ defmodule HelloNervesOled.Font do
   end
 
   defp build_chisel_font(bdf_font_name) do
+    fonts_source_dir = Path.join([:code.priv_dir(:hello_nerves_oled), "fonts"])
     fonts_destination_dir = Path.join([System.tmp_dir!(), "fonts"])
     File.mkdir_p(fonts_destination_dir)
 
-    font_data_src = Path.join([@fonts_source_base_url, bdf_font_name])
+    font_data_src = Path.join([fonts_source_dir, bdf_font_name])
     font_data_file = Path.join([fonts_destination_dir, bdf_font_name])
 
-    %{status: 200, body: raw_font} = Req.get!(font_data_src)
+    raw_font = File.read!(font_data_src)
     File.write!(font_data_file, raw_font)
 
     {:ok, %Chisel.Font{} = chisel_font} = Chisel.Font.load(font_data_file)
