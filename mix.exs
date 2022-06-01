@@ -38,6 +38,7 @@ defmodule HelloNervesOled.MixProject do
       {:scenic_driver_oled, "~> 0.1.0"},
       {:chisel, "~> 0.2.0"},
       {:bmp280, "~> 0.2.11"},
+      {:nerves_time_zones, "~> 0.2.0"},
 
       # Dependencies for all targets except :host
       {:nerves_runtime, "~> 0.11.6", targets: @all_targets},

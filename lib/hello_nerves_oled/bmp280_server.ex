@@ -55,7 +55,11 @@ defmodule HelloNervesOled.BMP280Server do
 
   defp measurement_to_string(%BMP280.Measurement{} = measurement) do
     [
-      time: Time.utc_now() |> Time.truncate(:second) |> to_string(),
+      time:
+        NaiveDateTime.local_now()
+        |> NaiveDateTime.to_time()
+        |> Time.truncate(:second)
+        |> to_string(),
       humidity: measurement.humidity_rh |> :erlang.float_to_binary(decimals: 2),
       pressure: measurement.pressure_pa |> :erlang.float_to_binary(decimals: 0),
       dew_point: measurement.dew_point_c |> :erlang.float_to_binary(decimals: 2),

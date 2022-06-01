@@ -49,7 +49,11 @@ defmodule HelloNervesOled.MetricsServer do
 
   defp get_metrics do
     [
-      time: Time.utc_now() |> Time.truncate(:second) |> to_string(),
+      time:
+        NaiveDateTime.local_now()
+        |> NaiveDateTime.to_time()
+        |> Time.truncate(:second)
+        |> to_string(),
       memory: :erlang.memory(:total),
       process: :erlang.system_info(:process_count)
     ]
